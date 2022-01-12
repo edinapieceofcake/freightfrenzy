@@ -2,6 +2,7 @@ package com.edinaftc.library.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -19,21 +20,21 @@ public class Lift extends Subsystem {
         _lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         _lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         _lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        _lift.setDirection(DcMotorSimple.Direction.REVERSE);
         _bucket = map.get(Servo.class,"bucket");
         _movingUp = false;
     }
 
     public void update(){
         if (_trigger <= 0.8)
-            if ((_lift.getCurrentPosition() > 150) && _movingUp)
+            if ((Math.abs(_lift.getCurrentPosition()) > 150) && _movingUp)
                 _bucket.setPosition(.45);
             else
                 _bucket.setPosition(-1);
         else
             _bucket.setPosition(1);
 
-        _lift.setPower(-_power);
-
+        _lift.setPower(-_power*.5);
     }
 
     public void setLiftPower(double power, double trigger){
